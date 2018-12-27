@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include <math.h>
 
 int isRunning = 1;
 
@@ -9,8 +10,8 @@ int main(int argc, char* argv[])
     contextData.minimalGLXVersionMinor = 3;
     contextData.minimalGLVersionMajor = 3;
     contextData.minimalGLVersionMinor = 3;
-    contextData.windowWidth = 300;
-    contextData.windowHeight = 300;
+    contextData.windowWidth = 1600;
+    contextData.windowHeight = 900;
     contextData.name = "Faith";
 
     configureOpenGL(&contextData);
@@ -22,15 +23,42 @@ int main(int argc, char* argv[])
     const unsigned pixelsSize = sizeof(unsigned) * contextData.windowHeight * contextData.windowWidth;
     pixelData.pixels = (unsigned*)malloc(pixelsSize);
 
+
+    Color c1 = RGBAtoColor(255, 0, 0, 0);
+    Color c2 = RGBAtoColor(0, 0, 255, 0);
+    
     unsigned* running = pixelData.pixels;
+    
     for(unsigned y = 0; y < contextData.windowHeight; ++y)
     {
         for (unsigned x = 0; x < contextData.windowWidth; ++x)
         {
-            *running = RGBAtoUnsigned(255, 0, 0, 0);
+            float castedX, castedY;
+            const float windowX = (float)contextData.windowWidth;
+            const float windowY = (float)contextData.windowHeight;
+
+            const float enumer = (float)y/x - windowX/windowY;
+            const float denom = 1.0f + ((float)y * windowY) / ((float)x * windowX); 
+            const float arg = atan(enumer/denom);
+
+            const float cosine = cos(arg);
+            
+            castedX = cosine * x;
+            castedY = cosine * y;
+
+            const float sqrtArg = (castedX * castedX + castedY * castedY)/
+                (windowX * windowX + windowY * windowY);
+            
+            const float t = sqrt(sqrtArg);
+            
+            Color c = lerpColor(&c1, &c2, t);
+
+            *running = ColorToUnsigned(&c);
+
             ++running;
         }
     }
+
     
     while(1)
     {        

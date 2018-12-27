@@ -421,3 +421,36 @@ void freePixelData(PixelBufferData* pdata)
 {
     free(pdata->pixels);
 }
+
+float lerp(const float v0, const float v1, const float t)
+{
+    return (1 - t) * v0 + t * v1;
+}
+
+Color lerpColor(const Color* a, const Color* b, const float t)
+{
+    Color res;
+    res.r = (unsigned char)lerp(a->r, b->r, t);
+    res.g = (unsigned char)lerp(a->g, b->g, t);
+    res.b = (unsigned char)lerp(a->b, b->b, t);
+    res.a = (unsigned char)lerp(a->a, b->a, t);
+
+    return res;     
+}
+
+unsigned ColorToUnsigned(const Color* c)
+{
+    return RGBAtoUnsigned(c->r, c->g, c->b, c->a);
+}
+
+Color RGBAtoColor(const unsigned char r, const unsigned char g,
+                  const unsigned char b, const unsigned char a)
+{
+    Color res;
+    res.r = r;
+    res.g = g;
+    res.b = b;
+    res.a = a;
+    
+    return res;
+}
